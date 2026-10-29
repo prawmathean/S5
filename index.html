@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ML Lab – Algorithm &amp; Procedure</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a1a;--card:#f6f7fb;--ac:#2f4bd8;--line:#dfe3f0;--f:#fff4d6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:600 18px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:14px}
+.w{max-width:760px;margin:0 auto}
+h1{font-size:25px;font-weight:800;margin:6px 0 4px}
+.sub{opacity:.75;margin:0 0 14px;font-size:14px}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+nav a{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 10px;color:var(--ac);text-decoration:none;font-weight:700;font-size:14px}
+section,.common{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 14px}
+h2{font-size:21px;font-weight:800;margin:0 0 2px;color:var(--ac)}
+.aim{font-size:16px;opacity:.85;margin:0 0 8px}
+h3{font-size:16px;font-weight:800;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em}
+ol,ul{margin:0;padding-left:20px}
+li{margin:2px 0}
+.f{background:var(--f);border-radius:8px;padding:8px 10px;margin:6px 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:600;font-size:15px;overflow-x:auto;white-space:pre}
+.res{border-left:4px solid var(--ac);padding:2px 10px;margin-top:8px;font-size:16.5px}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>ML Lab – Algorithm &amp; Procedure</h1>
+<p class="sub">Experiments 1, 2, 3, 6, 8, 9, 11, 12, 14, 16</p>
+<nav><a href="#e1">1</a><a href="#e2">2</a><a href="#e3">3</a><a href="#e6">6</a><a href="#e8">8</a><a href="#e9">9</a><a href="#e11">11</a><a href="#e12">12</a><a href="#e14">14</a><a href="#e16">16</a></nav>
+
+<div class="common">
+<h2>Common metrics</h2>
+<div class="f">MSE  = (1/m) Σ (ŷ − y)²        RMSE = √MSE
+R²   = 1 − SS_res / SS_tot
+Accuracy  = (TP+TN)/Total   Precision = TP/(TP+FP)
+Recall    = TP/(TP+FN)      F1 = 2·P·R/(P+R)</div>
+</div>
+
+<section id="e1">
+<h2>Exp 1 – Linear Regression (1 variable)</h2>
+<p class="aim">California Housing: AveRooms → house price. Gradient descent vs normal equation.</p>
+<h3>Algorithm (gradient descent)</h3>
+<ol><li>Start with θ₀ = 0, θ₁ = 0.</li><li>Predict ŷ = θ₀ + θ₁x.</li><li>Find error = ŷ − y.</li><li>Update θ₀ and θ₁ using the gradient.</li><li>Repeat for 1000 epochs and note the cost each time.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load dataset, pick AveRooms (X) and MedHouseVal (y).</li><li>Remove outliers (rooms &lt; 10, price &lt; 5).</li><li>Split 80/20, then StandardScaler.</li><li>Run gradient descent (lr = 0.01) and plot the cost curve.</li><li>Run normal equation.</li><li>Calculate MSE, RMSE, R² for both.</li><li>Plot data points with the fitted line.</li></ol>
+<h3>Formulas</h3>
+<div class="f">h(x) = θ₀ + θ₁x
+J = (1/2m) Σ (h(xᵢ) − yᵢ)²
+θ₀ := θ₀ − α(1/m) Σ (h − y)
+θ₁ := θ₁ − α(1/m) Σ (h − y)·x
+Normal eq: θ = (XᵀX)⁻¹ Xᵀ y</div>
+<div class="res">Both methods give almost the same θ, MSE and R² (≈ 0.2).</div>
+</section>
+
+<section id="e2">
+<h2>Exp 2 – Polynomial Regression</h2>
+<p class="aim">Auto MPG: displacement → mpg. Compare with linear.</p>
+<h3>Algorithm</h3>
+<ol><li>Choose degree d.</li><li>Expand x into x, x², … , xᵈ.</li><li>Fit ordinary linear regression on these new features.</li><li>Predict and calculate MSE, R².</li><li>Repeat for d = 1, 2, 3, 4, 6, 8 and compare.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load mpg.csv, drop missing values.</li><li>X = displacement, y = mpg; split 80/20.</li><li>Train the linear baseline.</li><li>Loop over degrees with PolynomialFeatures + LinearRegression.</li><li>Make a table of MSE, RMSE, R² for each degree.</li><li>Plot the curves for d = 2, 4, 8 with the linear line.</li></ol>
+<h3>Formulas</h3>
+<div class="f">h(x) = θ₀ + θ₁x + θ₂x² + … + θᵈxᵈ
+J = (1/2m) Σ (h(xᵢ) − yᵢ)²</div>
+<div class="res">d = 2–3 is best. d ≥ 8 overfits (test error rises). d = 1 underfits.</div>
+</section>
+
+<section id="e3">
+<h2>Exp 3 – Ridge &amp; Lasso Regression</h2>
+<p class="aim">Diabetes dataset: compare with plain linear regression.</p>
+<h3>Algorithm</h3>
+<ol><li>Scale all features.</li><li>Train plain linear regression (baseline).</li><li>Try many α values (0.001 to 100) with 5-fold cross-validation.</li><li>Pick the α with the lowest average validation error.</li><li>Refit Ridge and Lasso with the best α.</li><li>Compare MSE and R² on the test set.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load diabetes data (10 features, target).</li><li>Split 80/20 and apply StandardScaler.</li><li>Fit LinearRegression.</li><li>Use RidgeCV and LassoCV (cv = 5) to get best α.</li><li>Refit Ridge and Lasso.</li><li>Print results table and plot coefficients of all three.</li></ol>
+<h3>Formulas</h3>
+<div class="f">Ridge: J = (1/2m) Σ (h − y)² + α Σ θⱼ²      (L2)
+Lasso: J = (1/2m) Σ (h − y)² + α Σ |θⱼ|     (L1)</div>
+<div class="res">Ridge shrinks coefficients but keeps all. Lasso makes some exactly 0, so it does feature selection. Both are slightly better than plain linear.</div>
+</section>
+
+<section id="e6">
+<h2>Exp 6 – Logistic Regression: with vs without scaling</h2>
+<p class="aim">Pima Indians Diabetes dataset.</p>
+<h3>Algorithm</h3>
+<ol><li>Compute z = wᵀx + b, then p = sigmoid(z).</li><li>If p ≥ 0.5 predict 1, else 0.</li><li>Update w to reduce log-loss (solver: saga).</li><li>Train once on raw data, once on standardized data.</li><li>Compare the metrics.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load CSV, give column names, X = features, y = Outcome.</li><li>Split 70/30.</li><li>Train LogisticRegression on unscaled data.</li><li>Fit StandardScaler on train only, transform train and test.</li><li>Train again on scaled data.</li><li>Compute accuracy, precision, recall, F1 for both.</li><li>Plot the coefficient bars.</li></ol>
+<h3>Formulas</h3>
+<div class="f">σ(z) = 1 / (1 + e⁻ᶻ),   z = wᵀx + b
+Log-loss = −(1/m) Σ [ y·log(ŷ) + (1−y)·log(1−ŷ) ]
+Z-score: x_scaled = (x − mean) / std</div>
+<div class="res">Scaling gives faster, stable convergence. Accuracy ≈ 0.74–0.78 (scaled) vs 0.64–0.70 (unscaled).</div>
+</section>
+
+<section id="e8">
+<h2>Exp 8 – KNN on Fashion MNIST</h2>
+<p class="aim">Try K = 1, 3, 5, 11.</p>
+<h3>Algorithm</h3>
+<ol><li>Store all training images (lazy learner, no real training).</li><li>For a test image, find the distance to every training image.</li><li>Pick the K nearest.</li><li>Majority vote gives the class.</li><li>Repeat for each K value.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load Fashion MNIST; take 5000 train and 500 test images.</li><li>Flatten 28×28 to 784 features and divide by 255.</li><li>For each K, build KNeighborsClassifier (euclidean).</li><li>Note fit time and predict time.</li><li>Calculate accuracy and macro F1.</li><li>Plot accuracy and latency against K.</li></ol>
+<h3>Formulas</h3>
+<div class="f">Euclidean: d(x, q) = √ Σ (xᵢ − qᵢ)²
+Search cost per query = O(M × N)
+(M = training samples, N = features)</div>
+<div class="res">Small K: low bias, high variance (overfit). Large K: smooth, can underfit. Best around K = 3 or 5 (≈ 81–85%).</div>
+</section>
+
+<section id="e9">
+<h2>Exp 9 – Decision Tree (ID3)</h2>
+<p class="aim">Customer segmentation using Recency, Frequency, Monetary tiers.</p>
+<h3>Algorithm (ID3)</h3>
+<ol><li>Calculate entropy of the whole dataset.</li><li>For each attribute, calculate information gain.</li><li>Choose the attribute with the highest gain as the node.</li><li>Split data by that attribute’s values.</li><li>Repeat on each subset with remaining attributes.</li><li>Stop when the subset is pure, attributes are over, or max depth is reached. Leaf = majority class.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Create the retail data (Recency, Frequency, Monetary tier, Segment).</li><li>Convert text categories to numbers.</li><li>Split 75/25.</li><li>Train DecisionTreeClassifier(criterion = entropy, max_depth = 3).</li><li>Find accuracy.</li><li>Draw the tree with plot_tree.</li><li>Plot feature_importances_.</li></ol>
+<h3>Formulas</h3>
+<div class="f">Entropy:  H(S) = − Σ pᵢ log₂(pᵢ)
+Gain(S, A) = H(S) − Σ (|S_v| / |S|) · H(S_v)</div>
+<div class="res">Monetary tier is the most important feature (root), then Frequency, then Recency.</div>
+</section>
+
+<section id="e11">
+<h2>Exp 11 – Linear SVM</h2>
+<p class="aim">Iris: Setosa vs Non-Setosa.</p>
+<h3>Algorithm</h3>
+<ol><li>Find the line (hyperplane) that separates the two classes.</li><li>Choose the one with the maximum margin.</li><li>Points touching the margin are the support vectors.</li><li>Soft margin: allow some mistakes, controlled by C.</li><li>Classify a new point by the sign of wᵀx + b.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load Iris, use petal length and petal width.</li><li>Label: Setosa = 1, others = 0.</li><li>Split 80/20 (stratified), apply StandardScaler.</li><li>Train SVC(kernel = linear, C = 1).</li><li>Calculate accuracy, precision, recall, F1, confusion matrix.</li><li>Plot the boundary, the two margin lines and the support vectors.</li></ol>
+<h3>Formulas</h3>
+<div class="f">Hyperplane: wᵀx + b = 0
+Constraint: yᵢ(wᵀxᵢ + b) ≥ 1
+Margin = 2 / ||w||
+Soft margin: minimize ½||w||² + C Σ ξᵢ
+Decision: f(x) = sign(wᵀx + b)</div>
+<div class="res">Small C: wide margin, more errors allowed. Large C: narrow margin, fits training data tightly. Result ≈ 100% accuracy.</div>
+</section>
+
+<section id="e12">
+<h2>Exp 12 – SVM Kernels (Linear, Poly, RBF)</h2>
+<p class="aim">Fashion MNIST, 10 classes.</p>
+<h3>Algorithm</h3>
+<ol><li>Reduce data size (subsample + PCA).</li><li>Train an SVM with each kernel.</li><li>Kernel computes similarity in a higher dimension without actually moving there (kernel trick).</li><li>Multi-class is handled with one-vs-one / one-vs-rest.</li><li>Compare accuracy and training time.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load data, take a stratified 6000 images.</li><li>Divide by 255, split 80/20, StandardScaler.</li><li>PCA: 784 features to 50.</li><li>Train SVC linear, poly (degree 3), rbf (C = 1).</li><li>Note training time of each.</li><li>Calculate accuracy, precision, recall, F1 (macro).</li><li>Plot the confusion matrix of the best kernel.</li></ol>
+<h3>Formulas</h3>
+<div class="f">Decision: f(x) = sign( Σ αᵢ yᵢ K(xᵢ, x) + b )
+Linear: K = xᵢᵀxⱼ
+Poly:   K = (γ·xᵢᵀxⱼ + r)ᵈ
+RBF:    K = exp(−γ ||xᵢ − xⱼ||²)</div>
+<div class="res">RBF is best (≈ 0.83–0.88). Linear is fastest. Shirt, T-shirt, Pullover and Coat get confused most.</div>
+</section>
+
+<section id="e14">
+<h2>Exp 14 – Activation Functions (MNIST)</h2>
+<p class="aim">Sigmoid vs Tanh vs ReLU in a neural network.</p>
+<h3>Algorithm</h3>
+<ol><li>Forward pass: each neuron = activation(Σ w·x + b).</li><li>Find the loss (cross-entropy).</li><li>Backpropagation: compute gradients with the chain rule.</li><li>Update the weights.</li><li>Repeat for each epoch with each activation and compare.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load MNIST (fetch_openml), divide by 255.</li><li>Split 85/15.</li><li>For each of logistic, tanh, relu: build MLPClassifier(hidden = (128, 64), max_iter = 25).</li><li>Train and save loss_curve_ and test accuracy.</li><li>Plot the loss curves together and compare.</li></ol>
+<h3>Formulas</h3>
+<div class="f">Sigmoid: f(x) = 1/(1+e⁻ˣ)         f′ = f(1 − f)
+Tanh:    f(x) = (eˣ − e⁻ˣ)/(eˣ + e⁻ˣ)   f′ = 1 − f²
+ReLU:    f(x) = max(0, x)              f′ = 1 if x &gt; 0 else 0</div>
+<div class="res">Sigmoid’s max derivative is 0.25, so gradients vanish in deep layers. Order: ReLU (96–98%, fastest) &gt; Tanh (93–95%) &gt; Sigmoid (88–92%, slowest).</div>
+</section>
+
+<section id="e16">
+<h2>Exp 16 – K-Means vs Hierarchical Clustering</h2>
+<p class="aim">Mall Customer: Annual Income and Spending Score.</p>
+<h3>Algorithm: K-Means</h3>
+<ol><li>Choose K and place the initial centroids (k-means++).</li><li>Assign each point to its nearest centroid.</li><li>Move each centroid to the mean of its points.</li><li>Repeat steps 2–3 until nothing changes.</li></ol>
+<h3>Algorithm: Agglomerative</h3>
+<ol><li>Start with every point as its own cluster.</li><li>Merge the two closest clusters (Ward linkage).</li><li>Repeat until one cluster remains, then cut the dendrogram at K.</li></ol>
+<h3>Procedure</h3>
+<ol><li>Load data, pick Income and Spending Score.</li><li>Apply StandardScaler.</li><li>Elbow method: run K-Means for K = 2 to 10 and plot WCSS.</li><li>Fit K-Means with K = 5.</li><li>Fit AgglomerativeClustering (n = 5, ward).</li><li>Calculate silhouette score for both.</li><li>Plot the clusters and the dendrogram.</li></ol>
+<h3>Formulas</h3>
+<div class="f">WCSS = Σₖ Σ_{x∈Cₖ} ||x − μₖ||²
+Silhouette: s = (b − a) / max(a, b)
+ a = avg distance within own cluster
+ b = avg distance to nearest other cluster
+Ward: ΔESS = (|A||B| / (|A|+|B|)) · ||μ_A − μ_B||²</div>
+<div class="res">K-Means silhouette ≈ 0.55–0.58, Agglomerative ≈ 0.53–0.56. Silhouette near +1 means good clusters.</div>
+</section>
+</div>
+</body>
+</html>
