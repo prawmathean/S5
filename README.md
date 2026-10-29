@@ -66,9 +66,14 @@ ML/
 
 1. **Clone or navigate to the repository:**
    ```bash
-   cd ML
+   git clone https://github.com/prawmathean/S5 && cd S5
    ```
 
+    To open :
+
+    ```
+    xdg-open . 
+    ```
 2. **Create and activate a virtual environment (recommended):**
    ```bash
    python3 -m venv venv
